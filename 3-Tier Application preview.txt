@@ -1,0 +1,28 @@
+3-Tire Python Application Deployment
+                .
+                .
+                .
+                .
+                .
+                .
+directory structure for the project
+                .
+                .
+                .
+                .
+                .
+                .
+Project_folder/
+
+ 1.docker-compose.yml
+
+ 2.Frontend/
+   a.Dockerfile
+   b.app.py
+
+ 3.Backend/
+   a.Dockerfile
+   b.app.py
+
+ 4.database/
+   a.data/   # Persistent storage directory for the database

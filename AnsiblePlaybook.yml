@@ -1,0 +1,53 @@
+---
+- hosts: servers
+  become: true
+  vars:
+    container_count: 2
+    default_container_name: docker
+    default_container_image: ubuntu
+    default_container_command: sleep 1d
+
+  tasks:
+    - name: Install Ubuntu
+      apt:
+        name: ubuntu
+        state: latest
+        update_cache: true
+
+- name: Install mysqldb and required packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - mysqldb server
+    - python-mysqldb
+    - unzip
+ 
+- name: Create database “employees”.
+  mysql_db:
+    name: employees
+    state: present
+ 
+- name: Create SQL user “employees”.
+  mysql_user:
+    name: employees
+    host: "%"
+    password: "{{ employees_password }}"
+    priv: "employees.*:ALL"
+    state: present
+ 
+- name: check whether test_db is already imported
+  stat:
+    path: /var/lib/mysql/employees/employees.frm
+  register: testdb_imported
+ 
+- name: "Deploy Application"
+  hosts: all
+  roles:
+    - role: docker_compose_deploy
+      code_source: 'local'
+      project_directory: "/home/{{ ansible_user_id }}/app"
+      local_path: "{{ playbook_dir }}/app"
+
+       

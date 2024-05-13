@@ -1,0 +1,36 @@
+# Here we define three services: frontend, backend, and database.
+
+version: '3'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    networks:
+      - app_network
+    volumes:
+      - backend_data:/app/data
+
+  database:
+    image: mysqldb:latest
+    environment:
+      - 'DATABASE_URL=mysqldb://${DBUSER}:${DBPASSWORD}@${DBHOST}:5432/${DBNAME}'
+    networks:
+      - app_network
+    volumes:
+      - database_data:/var/lib/mysql
+
+networks:
+  app_network:
+
+volumes:
+  backend_data:
+  database_data:
